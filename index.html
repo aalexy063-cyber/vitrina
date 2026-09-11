@@ -1089,6 +1089,16 @@ footer{padding-bottom:120px}
 .webmail{margin:14px 0 0;font-size:14.5px;color:var(--ink2)}
 .webmail a{color:var(--acc);font-weight:700;text-decoration:none;border-bottom:1.5px solid rgba(109,92,168,.35);padding-bottom:1px}
 .webmail a:hover{border-bottom-color:var(--acc)}
+
+/* карта оценок в блоке отправки */
+.pmap{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.pc{display:inline-flex;align-items:center;gap:5px;min-width:34px;height:30px;padding:0 10px;border-radius:999px;border:1.5px dashed var(--line);
+  background:#fff;color:var(--ink3);font:700 13px var(--sans);text-decoration:none;transition:border-color .15s,color .15s,transform .12s}
+.pc:hover{border-color:var(--acc);color:var(--acc);transform:translateY(-1px)}
+.pc.on{border-style:solid;border-color:rgba(109,92,168,.45);color:var(--ink)}
+.pc.on i{font-style:normal;font-weight:700;font-size:11.5px;color:#fff;background:var(--acc);border-radius:999px;padding:1px 6px;line-height:1.3}
+.phint{display:block;margin-top:8px;font-size:12.5px;color:var(--ink3)}
+.send .prog{font-size:14.5px}
 </style></head><body>
 <div class="dock" id="dock"><div class="dock-inner"><nav class="dock-nav"><a href="#s-1">Вариант 1</a><a href="#s-2">Вариант 2</a><a href="#s-3">Вариант 3</a><a href="#s-4">Вариант 4</a><a href="#s-5">Вариант 5</a><a href="#s-6">Вариант 6</a><a href="#s-7">Вариант 7</a><a href="#s-8">Вариант 8</a><a href="#s-9">Вариант 9</a><a href="#s-10">Вариант 10</a><a href="#s-11">Вариант 11</a><a href="#s-12">Вариант 12</a><a href="#s-13">Вариант 13</a><a href="#s-14">Вариант 14</a><a href="#s-15">Вариант 15</a><a href="#s-16">Вариант 16</a><a href="#s-17">Вариант 17</a></nav></div><div class="dock-handle" id="dock-handle" role="button" tabindex="0" aria-expanded="false">оглавление</div></div>
 <div class="wrap">
@@ -1944,10 +1954,16 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')set(false);}
   var prog=document.getElementById('prog'),bar=document.getElementById('bar-txt');
   function rated(){return order.filter(function(c){return state.r[c];});}
   function progress(){
-    var n=rated().length,miss=order.filter(function(c){return !state.r[c];});
+    var n=rated().length;
     bar.textContent='Оценено '+n+' из '+N;
-    if(n===N){prog.innerHTML='Все '+N+' вариантов оценены — спасибо! Осталось выбрать любимые и нажать «Отправить письмом».';}
-    else{prog.innerHTML='Оценено '+n+' из '+N+'. Без оценки: '+miss.map(function(c){return '<a href="#s-'+c+'">'+c+'</a>';}).join(', ')+'. Нажмите на номер, чтобы перейти к варианту. Можно отправить и так, но полная картина мне поможет больше.';}
+    var chips=order.map(function(c){
+      var r=state.r[c];
+      return r?'<a class="pc on" href="#s-'+c+'" title="Вариант '+c+' — оценка '+r+'">'+c+'<i>'+r+'</i></a>'
+              :'<a class="pc" href="#s-'+c+'" title="Вариант '+c+' — без оценки">'+c+'</a>';
+    }).join('');
+    var head=(n===N)?'Все '+N+' вариантов оценены — спасибо! Осталось выбрать любимые и нажать «Отправить письмом».'
+                    :'Оценено '+n+' из '+N+'. Можно отправить и так, но полная картина мне поможет больше.';
+    prog.innerHTML=head+'<span class="pmap">'+chips+'</span><span class="phint">Нажмите на номер, чтобы перейти к варианту'+(n?' — рядом с номером стоит ваша оценка':'')+'; серые — ещё без оценки.</span>';
   }
   progress();
 
